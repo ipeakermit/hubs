@@ -79,7 +79,6 @@
         freeze-controller
         personal-space-bubble="debug: false;"
         rotate-selected-object
-        environment-map
         light="defaultLightsEnabled: false"
     >
         <a-assets>
@@ -189,7 +188,7 @@
                                         <a-entity is-remote-hover-target tags="singleActionButton:true;" mixin="rounded-text-button" block-button position="0 0 .35">
                                             <a-entity text="value:Hide; width:2.5; align:center;" text-raycast-hack position="0 0 0.001"></a-entity>
                                         </a-entity>
-                                        <a-entity is-remote-hover-target tags="singleActionButton:true;" mixin="rounded-text-button" visible-if-permitted="mute_users" mute-button position="0 -0.3 .35" scale="0.8 0.8 0.8">
+                                        <a-entity is-remote-hover-target tags="singleActionButton:true;" mixin="rounded-text-button" visible-if-permitted="mute_users" mute-button position="0 -0.3 .35" scale="0.8 0.8 0.8"  class="avatar-mute-button">
                                             <a-entity text="value:Mute; width:2.5; align:center;" text-raycast-hack visible-if-permitted="mute_users" position="0 0 0.001"></a-entity>
                                         </a-entity>
                                         <a-entity is-remote-hover-target tags="singleActionButton:true;" mixin="rounded-text-button" visible-if-permitted="kick_users" kick-button position="0 -0.5 .35" scale="0.8 0.8 0.8">
@@ -220,7 +219,8 @@
 
                         <template data-name="Head">
                             <a-entity
-                                avatar-audio-source="rolloffFactor: 2.0;"
+                                avatar-audio-source
+                                audio-zone-source
                                 personal-space-invader="radius: 0.15; useMaterial: true;"
                                 bone-visibility
                                 body-helper="type: kinematic; collisionFilterGroup: 4; collisionFilterMask: 1;"
@@ -318,7 +318,6 @@
                     position-at-border__freeze="target:.freeze-menu"
                     position-at-border__freeze-unprivileged="target:.freeze-unprivileged-menu"
                     listed-media
-                    use-audio-system-settings
                 >
                     <a-entity class="ui interactable-ui">
                         <a-entity class="freeze-menu" visibility-while-frozen="withinDistance: 100; withPermission: spawn_and_move_media">
@@ -970,7 +969,8 @@
                     top: 64;
                     right: 66;
                     bottom: 66;
-                    opacity: 1.0;
+                    transparent: false;
+                    alphaTest: 0.1;
                     src: #button"
             ></a-mixin>
 
@@ -982,7 +982,8 @@
                     top: 64;
                     right: 66;
                     bottom: 66;
-                    opacity: 1.0;
+                    transparent: false;
+                    alphaTest: 0.1;
                     src: #button"
             ></a-mixin>
 
@@ -994,7 +995,8 @@
                     top: 64;
                     right: 66;
                     bottom: 66;
-                    opacity: 1.0;
+                    transparent: false;
+                    alphaTest: 0.1;
                     src: #action-button"
             ></a-mixin>
 
@@ -1006,7 +1008,8 @@
                     top: 64;
                     right: 66;
                     bottom: 66;
-                    opacity: 1.0;
+                    transparent: false;
+                    alphaTest: 0.1;
                     src: #action-button"
             ></a-mixin>
 
@@ -1024,7 +1027,8 @@
                     top: 64;
                     right: 66;
                     bottom: 66;
-                    opacity: 1.0;
+                    transparent: false;
+                    alphaTest: 0.1;
                     src: #button"
             ></a-mixin>
         </a-assets>

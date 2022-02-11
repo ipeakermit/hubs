@@ -2,6 +2,7 @@ import { findAncestorWithComponent } from "../utils/scene-graph";
 import { waitForDOMContentLoaded } from "../utils/async-utils";
 import { easeOutQuadratic } from "../utils/easing";
 import { registerComponentInstance, deregisterComponentInstance } from "../utils/component-utils";
+import { MediaDevicesEvents } from "../utils/media-devices-utils";
 
 // This computation is expensive, so we run on at most one avatar per frame, including quiet avatars.
 // However if we detect an avatar is seen speaking (its volume is above DISABLE_AT_VOLUME_THRESHOLD)
@@ -135,11 +136,18 @@ AFRAME.registerSystem("local-audio-analyser", {
     this.volume = 0;
     this.prevVolume = 0;
 
-    this.el.addEventListener("local-media-stream-created", () => {
-      const audioSystem = this.el.sceneEl.systems["hubs-systems"].audioSystem;
-      this.analyser = audioSystem.outboundAnalyser;
-      this.levels = audioSystem.analyserLevels;
-    });
+    this.onMicEnabled = this.onMicEnabled.bind(this);
+    this.el.addEventListener(MediaDevicesEvents.MIC_SHARE_STARTED, this.onMicEnabled);
+  },
+
+  remove() {
+    this.el.removeEventListener(MediaDevicesEvents.MIC_SHARE_STARTED, this.onMicEnabled);
+  },
+
+  onMicEnabled() {
+    const audioSystem = this.el.sceneEl.systems["hubs-systems"].audioSystem;
+    this.analyser = audioSystem.outboundAnalyser;
+    this.levels = audioSystem.analyserLevels;
   },
 
   tick: function() {
@@ -315,7 +323,7 @@ AFRAME.registerComponent("mic-button", {
     const active = this.data.active;
     const hovering = this.hovering;
     const spriteNames =
-      SPRITE_NAMES[!active ? (hovering ? "MIC_HOVER" : "MIC") : hovering ? "MIC_OFF_HOVER" : "MIC_OFF"];
+      SPRITE_NAMES[active ? (hovering ? "MIC_HOVER" : "MIC") : hovering ? "MIC_OFF_HOVER" : "MIC_OFF"];
     const level = micLevelForVolume(audioAnalyser.volume);
     const spriteName = spriteNames[level];
     if (spriteName !== this.prevSpriteName) {

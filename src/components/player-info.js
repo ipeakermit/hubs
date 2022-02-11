@@ -2,6 +2,7 @@ import { injectCustomShaderChunks } from "../utils/media-utils";
 import { AVATAR_TYPES } from "../utils/avatar-utils";
 import { registerComponentInstance, deregisterComponentInstance } from "../utils/component-utils";
 import defaultAvatar from "../assets/models/DefaultAvatar.glb";
+import { MediaDevicesEvents } from "../utils/media-devices-utils";
 
 function ensureAvatarNodes(json) {
   const { nodes } = json;
@@ -51,8 +52,7 @@ AFRAME.registerComponent("player-info", {
     this.handleModelError = this.handleModelError.bind(this);
     this.handleRemoteModelError = this.handleRemoteModelError.bind(this);
     this.update = this.update.bind(this);
-    this.localStateAdded = this.localStateAdded.bind(this);
-    this.localStateRemoved = this.localStateRemoved.bind(this);
+    this.onMicStateChanged = this.onMicStateChanged.bind(this);
 
     this.isLocalPlayerInfo = this.el.id === "avatar-rig";
     this.playerSessionId = null;
@@ -69,6 +69,8 @@ AFRAME.registerComponent("player-info", {
     registerComponentInstance(this, "player-info");
   },
   remove() {
+    const avatarEl = this.el.querySelector("[avatar-audio-source]");
+    APP.isAudioPaused.delete(avatarEl);
     deregisterComponentInstance(this, "player-info");
   },
   play() {
@@ -85,8 +87,7 @@ AFRAME.registerComponent("player-info", {
     this.el.sceneEl.addEventListener("stateremoved", this.update);
 
     if (this.isLocalPlayerInfo) {
-      this.el.sceneEl.addEventListener("stateadded", this.localStateAdded);
-      this.el.sceneEl.addEventListener("stateremoved", this.localStateRemoved);
+      APP.dialog.on("mic-state-changed", this.onMicStateChanged);
     }
   },
   pause() {
@@ -102,12 +103,14 @@ AFRAME.registerComponent("player-info", {
     window.APP.store.removeEventListener("statechanged", this.update);
 
     if (this.isLocalPlayerInfo) {
-      this.el.sceneEl.removeEventListener("stateadded", this.localStateAdded);
-      this.el.sceneEl.removeEventListener("stateremoved", this.localStateRemoved);
+      APP.dialog.off("mic-state-changed", this.onMicStateChanged);
     }
   },
 
-  update() {
+  update(oldData) {
+    if (this.data.muted !== oldData.muted) {
+      this.el.emit("remote_mute_updated", { muted: this.data.muted });
+    }
     this.applyProperties();
   },
   updateDisplayName(e) {
@@ -184,8 +187,15 @@ AFRAME.registerComponent("player-info", {
       });
 
       if (this.isLocalPlayerInfo) {
-        el.setAttribute("emit-scene-event-on-remove", "event:action_end_video_sharing");
+        el.setAttribute("emit-scene-event-on-remove", `event:${MediaDevicesEvents.VIDEO_SHARE_ENDED}`);
       }
+    }
+
+    const avatarEl = this.el.querySelector("[avatar-audio-source]");
+    if (this.data.muted) {
+      APP.isAudioPaused.add(avatarEl);
+    } else {
+      APP.isAudioPaused.delete(avatarEl);
     }
   },
   handleModelError() {
@@ -195,14 +205,7 @@ AFRAME.registerComponent("player-info", {
     this.data.avatarSrc = defaultAvatar;
     this.applyProperties();
   },
-  localStateAdded(e) {
-    if (e.detail === "muted") {
-      this.el.setAttribute("player-info", { muted: true });
-    }
-  },
-  localStateRemoved(e) {
-    if (e.detail === "muted") {
-      this.el.setAttribute("player-info", { muted: false });
-    }
+  onMicStateChanged({ enabled }) {
+    this.el.setAttribute("player-info", { muted: !enabled });
   }
 });

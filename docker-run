@@ -1,0 +1,2 @@
+docker build -t hubs .
+docker run -it -p 8080:8080 hubs

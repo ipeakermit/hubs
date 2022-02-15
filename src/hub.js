@@ -22,9 +22,9 @@ import "networked-aframe/src/index";
 import "aframe-rounded";
 import "webrtc-adapter";
 import "aframe-slice9-component";
-import "./utils/threejs-positional-audio-updatematrixworld";
+//import "./utils/threejs-positional-audio-updatematrixworld";
 import "./utils/threejs-world-update";
-import patchThreeAllocations from "./utils/threejs-allocation-patches";
+//import patchThreeAllocations from "./utils/threejs-allocation-patches";
 import { isSafari } from "./utils/detect-safari";
 import {
   getReticulumFetchUrl,
@@ -72,7 +72,7 @@ import "./components/hide-when-pinned-and-forbidden";
 import "./components/visibility-while-frozen";
 import "./components/stats-plus";
 import "./components/networked-avatar";
-import "./components/media-views";
+//import "./components/media-views";
 import "./components/avatar-volume-controls";
 import "./components/pinch-to-move";
 import "./components/pitch-yaw-rotator";

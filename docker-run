@@ -1,2 +1,16 @@
-docker build -t hubs .
-docker run -it -p 8080:8080 hubs
+#!/bin/bash
+
+sudo rm -rf ./tmp
+
+#mkdir -p mycerts
+#sudo cp /etc/letsencrypt/live/codi13.dyndns.org/fullchain.pem mycerts/cert.pem
+#sudo cp /etc/letsencrypt/live/codi13.dyndns.org/privkey.pem mycerts/key.pem
+#sudo chown -R $USER mycerts
+
+./docker-build
+
+set -xv
+
+docker rm -f hubs
+#docker run -it -p 8080:8080 -v mycerts:/certs hubs
+docker run --name hubs -it -p 8080:8080 hubs

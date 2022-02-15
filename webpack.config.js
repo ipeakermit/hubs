@@ -185,7 +185,7 @@ async function fetchAppConfigAndEnvironmentVars() {
   process.env.SHORTLINK_DOMAIN = shortlink_domain;
   process.env.CORS_PROXY_SERVER = `${localIp}:8080/cors-proxy`;
   process.env.THUMBNAIL_SERVER = thumbnail_server;
-  process.env.NON_CORS_PROXY_DOMAINS = `${localIp},hubs.local,localhost`;
+  process.env.NON_CORS_PROXY_DOMAINS = `${localIp},codi13.dyndns.org,hubs.local,localhost`;
 
   return appConfig;
 }
@@ -222,15 +222,15 @@ module.exports = async (env, argv) => {
     if (env.localDev) {
       // Local Dev Environment (npm run local)
       Object.assign(process.env, {
-        HOST: "hubs.local",
-        RETICULUM_SOCKET_SERVER: "hubs.local",
-        CORS_PROXY_SERVER: "hubs-proxy.local:4000",
-        NON_CORS_PROXY_DOMAINS: "hubs.local,dev.reticulum.io",
-        BASE_ASSETS_PATH: "https://hubs.local:8080/",
-        RETICULUM_SERVER: "hubs.local:4000",
+        HOST: "codi13.dyndns.org",
+        RETICULUM_SOCKET_SERVER: "codi13.dyndns.org",
+        CORS_PROXY_SERVER: "codi13.dyndns.org:4000",
+        NON_CORS_PROXY_DOMAINS: "codi13.dyndns.org,hubs.local,dev.reticulum.io",
+        BASE_ASSETS_PATH: "https://codi13.dyndns.org:8080/",
+        RETICULUM_SERVER: "codi13.dyndns.org:4000",
         POSTGREST_SERVER: "",
         ITA_SERVER: "",
-        UPLOADS_HOST: "https://hubs.local:4000"
+        UPLOADS_HOST: "https://codi13.dyndns.org:4000"
       });
     }
   }
@@ -238,7 +238,7 @@ module.exports = async (env, argv) => {
   // In production, the environment variables are defined in CI or loaded from ita and
   // the app config is injected into the head of the page by Reticulum.
 
-  const host = process.env.HOST_IP || env.localDev || env.remoteDev ? "hubs.local" : "localhost";
+  const host = process.env.HOST_IP || env.localDev || env.remoteDev ? "codi13.dyndns.org" : "localhost";
 
   const liveReload = !!process.env.LIVE_RELOAD || false;
 
@@ -284,7 +284,8 @@ module.exports = async (env, argv) => {
       host: "0.0.0.0",
       public: `${host}:8080`,
       useLocalIp: true,
-      allowedHosts: [host, "hubs.local"],
+      allowedHosts: [host, "codi13.dyndns.org", "hubs.local"],
+      disableHostCheck: true,
       headers: {
         "Access-Control-Allow-Origin": "*"
       },
@@ -417,7 +418,8 @@ module.exports = async (env, argv) => {
           include: [path.resolve(__dirname, "src")],
           // Exclude JS assets in node_modules because they are already transformed and often big.
           exclude: [path.resolve(__dirname, "node_modules")],
-          loader: "babel-loader"
+          loader: "babel-loader",
+          options: legacyBabelConfig
         },
         {
           test: /\.(scss|css)$/,

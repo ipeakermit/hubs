@@ -3,10 +3,13 @@ services:
     dialog:
         container_name: dialog
         image: dialog
+        ports:
+            - "4443:4443"
         networks:
             - vxlab
     db:
         container_name: db
+        restart: unless-stopped
         image: postgres:10
         environment:
             POSTGRES_USER: postgres
@@ -30,7 +33,7 @@ services:
         volumes:
             - .:/ret
         ports:
-            - "4000:4000"
+            - "8000:8000"
         depends_on:
             - db
         networks:

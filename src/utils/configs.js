@@ -27,6 +27,7 @@ let isAdmin = false;
     __webpack_public_path__ = configs[x];
   }
 });
+console.log("Hubs configs ", JSON.stringify(configs));
 
 // Custom clients do not use <meta> tags for passing data, so if thumbnail_server meta tag exists, it is not a custom client
 const hasThumbnailServerMetaTag = !!document.querySelector("meta[name='env:thumbnail_server']");

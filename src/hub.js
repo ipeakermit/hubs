@@ -2,7 +2,7 @@ import "./utils/debug-log";
 import "./webxr-bypass-hacks";
 import configs from "./utils/configs";
 import "./utils/theme";
-import "@babel/polyfill";
+//import "@babel/polyfill";
 
 console.log(`App version: ${process.env.BUILD_VERSION || "?"}`);
 
@@ -759,6 +759,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const authChannel = new AuthChannel(store);
   const hubChannel = new HubChannel(store, hubId);
+  console.log("hubChannel "+hubChannel);
   const entryManager = new SceneEntryManager(hubChannel, authChannel, history);
 
   window.APP.scene = scene;
@@ -1226,6 +1227,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     resolve: null
   };
 
+  console.log("hubChannel.setPhoenixChannel "+hubChannel);
   hubChannel.setPhoenixChannel(hubPhxChannel);
 
   hubPhxChannel

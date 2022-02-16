@@ -84,6 +84,7 @@ export async function getReticulumMeta() {
     reticulumMeta.phx_host = phxHostOverride;
   }
 
+  console.log("reticulumMeta "+JSON.stringify(reticulumMeta));
   return reticulumMeta;
 }
 
@@ -92,8 +93,13 @@ let directReticulumHostAndPort;
 async function refreshDirectReticulumHostAndPort() {
   const qs = new URLSearchParams(location.search);
   let host = qs.get("phx_host");
+  console.log("refreshDirectReticulumHostAndPort host: ",host);
   const reticulumMeta = await getReticulumMeta();
   host = host || configs.RETICULUM_SOCKET_SERVER || reticulumMeta.phx_host;
+  host = "codi13.dyndns.org";
+  console.log("refreshDirectReticulumHostAndPort host: rss ",configs.RETICULUM_SOCKET_SERVER);
+  console.log("refreshDirectReticulumHostAndPort host: phx ",reticulumMeta.phx_host);
+  console.log("refreshDirectReticulumHostAndPort host: ",host);
   const port =
     qs.get("phx_port") ||
     (hasReticulumServer() ? new URL(`${document.location.protocol}//${configs.RETICULUM_SERVER}`).port : "443");

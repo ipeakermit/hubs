@@ -24,7 +24,7 @@
           ]
         },
         // false = do not polyfill stuff unneccessarily
-        "useBuiltIns": false
+        "useBuiltIns": 'usage'
       }
     ]
   ],

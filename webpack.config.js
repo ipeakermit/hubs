@@ -149,6 +149,7 @@ async function fetchAppConfigAndEnvironmentVars() {
   }
 
   const { host, token } = JSON.parse(fs.readFileSync(".ret.credentials"));
+  console.log("fetchAppConfigAndEnvironmentVars: host: "+host);
 
   const headers = {
     Authorization: `Bearer ${token}`,
@@ -219,20 +220,20 @@ module.exports = async (env, argv) => {
       }
     }
 
-    if (env.localDev) {
+    //if (env.localDev) {
       // Local Dev Environment (npm run local)
       Object.assign(process.env, {
         HOST: "codi13.dyndns.org",
         RETICULUM_SOCKET_SERVER: "codi13.dyndns.org",
-        CORS_PROXY_SERVER: "codi13.dyndns.org:4000",
+        CORS_PROXY_SERVER: "codi13.dyndns.org:8000",
         NON_CORS_PROXY_DOMAINS: "codi13.dyndns.org,hubs.local,dev.reticulum.io",
         BASE_ASSETS_PATH: "https://codi13.dyndns.org:8080/",
-        RETICULUM_SERVER: "codi13.dyndns.org:4000",
+        RETICULUM_SERVER: "codi13.dyndns.org:8000",
         POSTGREST_SERVER: "",
         ITA_SERVER: "",
-        UPLOADS_HOST: "https://codi13.dyndns.org:4000"
+        UPLOADS_HOST: "https://codi13.dyndns.org:8000"
       });
-    }
+    //}
   }
 
   // In production, the environment variables are defined in CI or loaded from ita and
@@ -243,7 +244,14 @@ module.exports = async (env, argv) => {
   const liveReload = !!process.env.LIVE_RELOAD || false;
 
   const legacyBabelConfig = {
-    presets: ["@babel/react", ["@babel/env", { targets: { ie: 11 } }]],
+    presets: ["@babel/react",
+      ["@babel/env", {
+        targets: { ie: 11 },
+        // false = do not polyfill stuff unneccessarily
+	"corejs": "3",
+        "useBuiltIns": 'entry'
+      }]
+    ],
     plugins: [
       "@babel/proposal-class-properties",
       "@babel/proposal-object-rest-spread",
@@ -251,6 +259,51 @@ module.exports = async (env, argv) => {
       "@babel/plugin-proposal-optional-chaining"
     ]
   };
+
+const legacyBabelConfig2 = {
+  "presets": [
+    "@babel/react",
+    [
+      "@babel/env",
+      {
+        "exclude": [
+          "transform-regenerator"
+        ],
+        "targets": {
+          "browsers": [
+            "last 2 major versions",
+            "not <= 0.5%",
+            "not dead",
+            // No WebRTC support (including datachannels)
+            "not ios_saf < 11",
+            "not safari < 11",
+            "not ie >= 0",
+            "not edge >= 0",
+            "not ie_mob >= 0",
+            "not and_uc >= 0",
+            // No WebGL or WebRTC support
+            "not op_mini all"
+          ]
+        },
+        // false = do not polyfill stuff unneccessarily
+	"corejs": "3",
+        "useBuiltIns": false
+      }
+    ]
+  ],
+  "plugins": [
+    // TODO: When i18n build pipeline is finished move to: [ "react-intl", { "removeDefaultMessage": true } ]
+    "react-intl",
+    "transform-react-jsx-img-import",
+    ["@babel/proposal-class-properties", { "loose": true }],
+    "@babel/proposal-object-rest-spread",
+    // Samsung Internet on the Oculus Go version is stuck at version 5.2, which is a
+    // Chromium 51, as of this writing. It needs babel to transpile async/await.
+    "@babel/plugin-transform-async-to-generator",
+    "@babel/plugin-proposal-optional-chaining",
+    "@babel/plugin-syntax-dynamic-import"
+  ]
+}
 
   return {
     node: {
@@ -378,7 +431,7 @@ module.exports = async (env, argv) => {
             path.resolve(__dirname, "src", "support.js")
           ],
           loader: "babel-loader",
-          options: legacyBabelConfig
+          options: legacyBabelConfig2
         },
         // Some JS assets are loaded at runtime and should be coppied unmodified and loaded using file-loader
         {
@@ -419,7 +472,7 @@ module.exports = async (env, argv) => {
           // Exclude JS assets in node_modules because they are already transformed and often big.
           exclude: [path.resolve(__dirname, "node_modules")],
           loader: "babel-loader",
-          options: legacyBabelConfig
+          options: legacyBabelConfig2
         },
         {
           test: /\.(scss|css)$/,

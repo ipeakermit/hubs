@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sudo rm -rf ./tmp
+# tmp/db is for postgres, don't touch
 
 #mkdir -p mycerts
 #sudo cp /etc/letsencrypt/live/codi13.dyndns.org/fullchain.pem mycerts/cert.pem
@@ -13,4 +13,6 @@ set -xv
 
 docker rm -f hubs
 #docker run -it -p 8080:8080 -v mycerts:/certs hubs
-docker run --name hubs -it -p 8080:8080 hubs
+#docker run --name hubs -it -p 8080:8080 hubs npm run login
+docker run --name hubs -d -p 8080:8080 hubs
+docker logs -f hubs &

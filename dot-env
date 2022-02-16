@@ -1,11 +1,11 @@
 # To override these variables, create a .env file containing the overrides.
 
 # Domain for short links
-SHORTLINK_DOMAIN="hub.link"
+SHORTLINK_DOMAIN="codi13.dyndns.org"
 
 # The Reticulum backend to connect to. Used for storing information about active hubs.
 # See here for the server code: https://github.com/mozilla/reticulum
-RETICULUM_SERVER="dev.reticulum.io"
+RETICULUM_SERVER="codi13.dyndns.org"
 
 # CORS proxy.
 CORS_PROXY_SERVER="hubs-proxy.com"
@@ -18,7 +18,7 @@ THUMBNAIL_SERVER="nearspark-dev.reticulum.io"
 ASSET_BUNDLE_SERVER="https://asset-bundles-prod.reticulum.io"
 
 # Comma-separated list of domains which are known to not need CORS proxying
-NON_CORS_PROXY_DOMAINS="hubs.local,dev.reticulum.io"
+NON_CORS_PROXY_DOMAINS="codi13.dyndns.org"
 
 # The root URL under which Hubs expects static assets to be served.
 BASE_ASSETS_PATH=/
@@ -28,4 +28,4 @@ DEFAULT_SCENE_SID="JGLt8DP"
 
 # Uncomment to load the app config from the reticulum server in development.
 # Useful when testing the admin panel.
-# LOAD_APP_CONFIG=true
+LOAD_APP_CONFIG=true

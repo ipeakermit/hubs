@@ -8,6 +8,8 @@ COPY package-lock.json package-lock.json
 #COPY . .
 
 RUN npm ci
+# takes forever??
+#RUN npm install regenerator-runtime
 
 COPY src src
 COPY *.json ./
@@ -20,5 +22,6 @@ COPY Jenkinsfile Jenkinsfile
 
 COPY mycerts/key.pem certs/key.pem
 COPY mycerts/cert.pem certs/cert.pem
+COPY dot-env .env
+#CMD ["npm","run","dev"]
 CMD ["npm","run","local"]
-

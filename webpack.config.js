@@ -205,6 +205,28 @@ module.exports = async (env, argv) => {
    * Initialize the Webpack build envrionment for the provided environment.
    */
 
+  if (argv.mode === "production") {
+    if (env.prodVps) {
+      // Production on VPS
+      const your_domain = "codi15.dyndns.org";
+      const port_reticulum = 4000;
+      //
+      Object.assign(process.env, {
+	HOST_IP: your_domain,
+	SHORTLINK_DOMAIN: `${your_domain}:${port_reticulum}`,
+	HOST: your_domain,
+	RETICULUM_SOCKET_SERVER: your_domain,
+	CORS_PROXY_SERVER: `${your_domain}:${port_reticulum}`,
+	NON_CORS_PROXY_DOMAINS: `${your_domain},dev.reticulum.io`,
+	BASE_ASSETS_PATH: `https://${your_domain}:8080/`,
+	RETICULUM_SERVER: `${your_domain}:${port_reticulum}`,
+	POSTGREST_SERVER: "",
+	ITA_SERVER: "",
+	UPLOADS_HOST: `https://${your_domain}:${port_reticulum}`,
+      });
+    }
+  }
+
   if (argv.mode !== "production" || env.bundleAnalyzer) {
     if (env.loadAppConfig || process.env.LOAD_APP_CONFIG) {
       if (!env.localDev) {
@@ -222,15 +244,15 @@ module.exports = async (env, argv) => {
     if (env.localDev) {
       // Local Dev Environment (npm run local)
       Object.assign(process.env, {
-        HOST: "hubs.local",
-        RETICULUM_SOCKET_SERVER: "hubs.local",
-        CORS_PROXY_SERVER: "hubs-proxy.local:4000",
-        NON_CORS_PROXY_DOMAINS: "hubs.local,dev.reticulum.io",
-        BASE_ASSETS_PATH: "https://hubs.local:8080/",
-        RETICULUM_SERVER: "hubs.local:4000",
+        HOST: "codi15.dyndns.org",
+        RETICULUM_SOCKET_SERVER: "codi15.dyndns.org",
+        CORS_PROXY_SERVER: "codi15.dyndns.org:4000",
+        NON_CORS_PROXY_DOMAINS: "codi15.dyndns.org,hubs.local,dev.reticulum.io",
+        BASE_ASSETS_PATH: "https://codi15.dyndns.org:8080/",
+        RETICULUM_SERVER: "codi15.dyndns.org:4000",
         POSTGREST_SERVER: "",
         ITA_SERVER: "",
-        UPLOADS_HOST: "https://hubs.local:4000"
+        UPLOADS_HOST: "https://codi15.dyndns.org:4000"
       });
     }
   }
@@ -238,7 +260,8 @@ module.exports = async (env, argv) => {
   // In production, the environment variables are defined in CI or loaded from ita and
   // the app config is injected into the head of the page by Reticulum.
 
-  const host = process.env.HOST_IP || env.localDev || env.remoteDev ? "hubs.local" : "localhost";
+  //const host = process.env.HOST_IP || env.localDev || env.remoteDev ? "hubs.local" : "localhost";
+  const host = "codi15.dyndns.org"
 
   const liveReload = !!process.env.LIVE_RELOAD || false;
 
@@ -284,7 +307,7 @@ module.exports = async (env, argv) => {
       host: "0.0.0.0",
       public: `${host}:8080`,
       useLocalIp: true,
-      allowedHosts: [host, "hubs.local"],
+      allowedHosts: [host, "codi15.dyndns.org", "hubs.local"],
       headers: {
         "Access-Control-Allow-Origin": "*"
       },
@@ -316,7 +339,7 @@ module.exports = async (env, argv) => {
           const redirectLocation = req.header("location");
 
           if (redirectLocation) {
-            res.header("Location", "https://localhost:8080/cors-proxy/" + redirectLocation);
+            res.header("Location", "https://codi15.dyndns.org:8080/cors-proxy/" + redirectLocation);
           }
 
           if (req.method === "OPTIONS") {
@@ -333,7 +356,8 @@ module.exports = async (env, argv) => {
         });
 
         // be flexible with people accessing via a local reticulum on another port
-        app.use(cors({ origin: /hubs\.local(:\d*)?$/ }));
+        //app.use(cors({ origin: /hubs\.local(:\d*)?$/ }));
+        app.use(cors({ origin: /codi15\.dyndns\.org(:\d*)?$/ }));
         // networked-aframe makes HEAD requests to the server for time syncing. Respond with an empty body.
         app.head("*", function(req, res, next) {
           if (req.method === "HEAD") {

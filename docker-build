@@ -1,0 +1,8 @@
+#!/bin/bash
+
+mkdir -p mycerts
+sudo cp /etc/letsencrypt/live/codi15.dyndns.org/fullchain.pem mycerts/cert.pem
+sudo cp /etc/letsencrypt/live/codi15.dyndns.org/privkey.pem mycerts/key.pem
+sudo chown -R $USER mycerts
+
+docker build . -t hubs --network=host

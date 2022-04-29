@@ -41,8 +41,11 @@ const ask = q => new Promise(res => rl.question(q, res));
   console.log(`Logging into ${host} as ${email}. Click on the link in your email to continue.`);
   const authChannel = new AuthChannel(store);
   authChannel.setSocket(socket);
+  console.log("Connecting...");
   const { authComplete } = await authChannel.startAuthentication(email);
+  console.log("Started authentication...");
   await authComplete;
+  console.log("Completed authentication");
   const { token } = store.state.credentials;
   const creds = {
     host,

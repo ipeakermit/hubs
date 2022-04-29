@@ -1,0 +1,5 @@
+#!/bin/bash
+
+#HOST_IP=131.170.250.213 npm run local
+npm run prod
+#HOST_IP=131.170.250.213 npm run dev

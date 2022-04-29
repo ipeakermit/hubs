@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# tmp/db is for postgres, don't touch
+
+./docker-build
+
+set -xv
+
+docker rm -f hubs
+docker run --name hubs -d -p 8080:8080 -v /etc/letsencrypt:/etc/letsencrypt hubs scripts/hubs
+docker logs -f hubs &
